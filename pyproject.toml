@@ -1,0 +1,22 @@
+[build-system]
+requires = [
+    'setuptools==68.1.2',
+]
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'game_of_life'
+version = '1.0.0'
+description = 'Game of life'
+readme = 'README.md'
+requires-python = '>=3.11.0'
+dependencies = [
+    "pygame"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[[project.authors]]
+name = 'lubaskinc0de'
+email = 'lubaskincorporation@gmail.com'
