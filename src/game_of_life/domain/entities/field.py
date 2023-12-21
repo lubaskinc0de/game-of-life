@@ -4,6 +4,10 @@ from game_of_life.domain.entities.node import Node
 from game_of_life.domain.value_objects.node_position import NodePosition
 
 
+def to_node_position(coords: tuple[int, int]) -> NodePosition:
+    return NodePosition(coords)
+
+
 @dataclass
 class Field:
     nodes: dict[NodePosition, Node]
@@ -14,47 +18,35 @@ class Field:
         return self.nodes.get(position)
 
     def get_neighbors(self, position: NodePosition) -> list[Node]:
-        positions = {
-            "top_y": (position.x, max(0, position.y - 1)),
-            "bottom_y": (position.x, min(self.height, position.y + 1)),
-            "left_x": (max(0, position.x - 1), position.y),
-            "right_x": (min(self.width, position.x + 1), position.y),
-            "top_left": (max(0, position.x - 1), max(0, position.y - 1)),
-            "top_right": (min(self.width, position.x + 1), max(0, position.y - 1)),
-            "bottom_left": (max(0, position.x - 1), min(self.height, position.y + 1)),
-            "bottom_right": (min(self.width, position.x + 1), min(self.height, position.y + 1)),
-        }
+        neighbors = []
 
-        neighbors: list[Node] = []
-
-        for x, y in positions.values():
-            neighbor_position = NodePosition((x, y))
-            neighbor = self.get_node(neighbor_position)
-
-            if neighbor:
-                neighbors.append(neighbor)
+        for x in range(max(position.x - 1, 0), min(position.x + 2, self.width)):
+            for y in range(max(position.y - 1, 0), min(position.y + 2, self.height)):
+                neighbor_position = NodePosition((x, y))
+                if neighbor_position != position:
+                    neighbors.append(self.get_node(neighbor_position))
 
         return neighbors
 
-    def append(self, position: NodePosition):
-        self.nodes[position] = Node(
-            neighbors=self.get_neighbors(position),
-            position=position,
-        )
-
     def next_generation(self) -> None:
+        updated_state: dict[NodePosition, bool] = dict()
+
         for x in range(self.width):
             for y in range(self.height):
                 position = NodePosition((x, y))
                 node = self.get_node(position)
-                neighbors = self.get_neighbors(position)
-
-                node.neighbors = neighbors
 
                 if not node.is_alive:
-                    node.try_to_born()
-                if node.is_alive:
-                    node.try_to_survive()
+                    if node.is_able_to_born != (node.is_alive):
+                        updated_state[position] = node.is_able_to_born
+                else:
+                    if node.is_able_to_survive != node.is_alive:
+                        updated_state[position] = node.is_able_to_survive
+
+        for position in updated_state:
+            node = self.get_node(position)
+
+            node.is_alive = updated_state[position]
 
     @property
     def is_anyone_alive(self) -> bool:

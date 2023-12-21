@@ -25,4 +25,7 @@ class FieldService:
 
         field = Field(width=width, height=height, nodes=nodes)
 
+        for node_position, node in nodes.items():
+            node.neighbors = field.get_neighbors(node_position)
+
         return field

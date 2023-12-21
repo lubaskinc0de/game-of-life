@@ -10,20 +10,22 @@ class Node:
     is_alive: bool = False
 
     @property
+    def alive_neighbors(self) -> int:
+        return len(list(filter(lambda n: n.is_alive, self.neighbors)))
+
+    @property
     def is_able_to_survive(self) -> bool:
-        return len(self.neighbors) == 2 or len(self.neighbors) == 3
+        return self.alive_neighbors == 2 or self.alive_neighbors == 3
 
     @property
     def is_able_to_born(self) -> bool:
-        return len(self.neighbors) == 3
-
-    def try_to_born(self) -> None:
-        if self.is_able_to_born:
-            self.is_alive = True
-
-    def try_to_survive(self) -> None:
-        if not self.is_able_to_survive:
-            self.is_alive = False
+        return self.alive_neighbors == 3
 
     def __bool__(self) -> bool:
         return self.is_alive
+
+    def __repr__(self) -> str:
+        return str(self)
+
+    def __str__(self) -> str:
+        return self.position.__str__()

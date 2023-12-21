@@ -22,4 +22,4 @@ class NodePosition(ValueObject[tuple[int, int]]):
         return other.x == self.x and other.y == self.y
 
     def __str__(self) -> str:
-        return "X: {0}, Y: {1}".format(self.x, self.y)
+        return "X: {0} Y: {1}".format(self.x, self.y)

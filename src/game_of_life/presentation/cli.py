@@ -17,7 +17,7 @@ def generate_random_field(width, height) -> Field:
 
     for y in range(height):
         for x in range(width):
-            if random.random() < 0.1:
+            if random.random() < 0.5:
                 alive_nodes.append(NodePosition((x, y)))
 
     field_service = FieldService()
