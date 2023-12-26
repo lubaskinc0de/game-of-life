@@ -1,0 +1,3 @@
+.venv/
+.env
+src/game_of_life.egg-info/

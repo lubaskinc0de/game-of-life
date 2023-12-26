@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+    bot:
+        container_name: bot
+        build: ./
+        restart: on-failure
+        command: python src/game_of_life/presentation/telegram/bot.py
+        env_file:
+            - .env
+        depends_on:
+            - bot_redis
+
+    bot_redis:
+        container_name: redis
+        image: redis:7.0.4-alpine
+        restart: on-failure
+        ports:
+            - "6378:6378"
+        volumes:
+            - redis_data:/data
+
+volumes:
+    redis_data:

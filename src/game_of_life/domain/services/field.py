@@ -1,3 +1,4 @@
+import random
 from typing import Optional
 
 from game_of_life.domain.entities.field import Field
@@ -13,8 +14,8 @@ class FieldService:
                ) -> Field:
         nodes: dict[NodePosition, Node] = dict()
 
-        for x in range(width):
-            for y in range(height):
+        for x in range(width + 1):
+            for y in range(height + 1):
                 position = NodePosition((x, y))
                 node = Node(position, [])
 
@@ -27,5 +28,20 @@ class FieldService:
 
         for node_position, node in nodes.items():
             node.neighbors = field.get_neighbors(node_position)
+
+        return field
+
+    def random(self,
+               width: Optional[int] = None,
+               height: Optional[int] = None,
+               ):
+        alive_nodes: list[NodePosition] = []
+
+        for y in range(height):
+            for x in range(width):
+                if random.random() < 0.4:
+                    alive_nodes.append(NodePosition((x, y)))
+
+        field = self.create(width=width, height=height, alive_nodes=alive_nodes)
 
         return field

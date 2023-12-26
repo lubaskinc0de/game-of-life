@@ -11,18 +11,21 @@ def to_node_position(coords: tuple[int, int]) -> NodePosition:
 @dataclass
 class Field:
     nodes: dict[NodePosition, Node]
-    width: int = 100
-    height: int = 100
+    width: int
+    height: int
 
     def get_node(self, position: NodePosition) -> Node:
-        return self.nodes.get(position)
+        x, y = position.x % self.width, position.y % self.height
+
+        return self.nodes[NodePosition((x, y))]
 
     def get_neighbors(self, position: NodePosition) -> list[Node]:
         neighbors = []
 
-        for x in range(max(position.x - 1, 0), min(position.x + 2, self.width)):
-            for y in range(max(position.y - 1, 0), min(position.y + 2, self.height)):
+        for x in range(position.x - 1, position.x + 2):
+            for y in range(position.y - 1, position.y + 2):
                 neighbor_position = NodePosition((x, y))
+
                 if neighbor_position != position:
                     neighbors.append(self.get_node(neighbor_position))
 
@@ -37,7 +40,7 @@ class Field:
                 node = self.get_node(position)
 
                 if not node.is_alive:
-                    if node.is_able_to_born != (node.is_alive):
+                    if node.is_able_to_born != node.is_alive:
                         updated_state[position] = node.is_able_to_born
                 else:
                     if node.is_able_to_survive != node.is_alive:
@@ -51,3 +54,9 @@ class Field:
     @property
     def is_anyone_alive(self) -> bool:
         return any(list(self.nodes.values()))
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    def __str__(self) -> str:
+        return "Field with {} nodes".format(len(self.nodes))
